@@ -1,59 +1,82 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ingatlanok 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A következő feladatban egy ingatlanok értékesítésével foglalkozó vállalkozás weboldalát kell elkészíteni a feladatleírás és a minta szerint. 
 
-## About Laravel
+### Publikus felület
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. kategóriák megjelenítése a legördülő listában és az ingatlanok listázása a kiválasztott kategória szerint. 
+<img src="./minta/public_minta1.png" alt="">
+<img src="./minta/public_minta2.png" alt="">
+2. Egyetlen, kiválasztott ingatlan megjelenítése
+<img src="./minta/public_ingatlan_reszletek.png" alt="">
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Admin felület
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. Ingatlanok megjelenítése táblázatban, kategóriák megjelenítése a legördülő listában és az ingatlanok listázása a kiválasztott kategória szerint. 
+<img src="./minta/admin_ingatlanok_minta1.png" alt="">
 
-## Learning Laravel
+2. Egyetlen, kiválasztott ingatlan megjelenítése
+<img src="./minta/admin_ingatlan_szerkesztese.png" alt="">
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Backend
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Adatbázis
 
-## Laravel Sponsors
+<img src="./minta/ab.png" alt="">
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Kategóriák
 
-### Premium Partners
+| Mező neve     | Típus                   | Null érték | Egyéb megjegyzés                                                                                        |
+| ------------- | ----------------------- | ---------- | ------------------------------------------------------------------------------------------------------- |
+| id            | bigint (auto-increment) | NO         | elsődleges kulcs (PRIMARY KEY)                                                                          |
+| kategoria_nev | enum                    | NO         | lehetséges értékek: 'ház', 'lakás', 'építési telek', 'garázs', 'mezőgazdasági épület', 'ipari ingatlan' |
+                                                                   
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+#### Ingatlanok
 
-## Contributing
+| Mező neve    | Típus                   | Null érték | Egyéb megjegyzés                                              |
+| ------------ | ----------------------- | ---------- | ------------------------------------------------------------- |
+| id           | bigint (auto-increment) | NO         | elsődleges kulcs (PRIMARY KEY)                                |
+| kategoria_id | bigint                  | YES        | idegen kulcs `kategoriak.id`, `NULL` ha törölték a kategóriát |
+| leiras       | text                    | NO         | ingatlan leírása                                              |
+| datum        | timestamp               | NO         | alapértelmezett: aktuális időpont                             |
+| tehermentes  | boolean                 | NO         | ingatlan tehermentes-e                                        |
+| ar           | integer                 | NO         | ingatlan ára                                                  |
+| kepUrl       | string(255)             | NO         | kép elérési útja                                              |
+                        
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Ha a hirdetés dátuma nem kerül megadásra, akkor annak alapértelmezett értéke az aktuális dátum legyen! 
 
-## Code of Conduct
+A kategoriak tábla  értékei: 
+[
+    'ház',
+    'lakás',
+    'építési telek',
+    'garázs',
+    'mezőgazdasági épület',
+    'ipari ingatlan',
+]
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Végpontok
 
-## Security Vulnerabilities
+1. **GET /ingatlanok**: visszaadja az összes ingatlan teljes adatait, beleértve a kapcsolódó kategóriát.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. **POST /ingatlanok**: új ingatlan létrehozása.
+```
+{ 
+    "kategoria_id": 1, 
+    "leiras": "lorem ipsum...", 
+    "datum": "2025-01-07", 
+    "tehermentes": true, 
+    "ar": 45000000, 
+    "kepUrl": "haz1.jpg" }
+```
 
-## License
+3. **GET /kategoriak**: visszaadja az összes kategóriát.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **DELETE /ingatlanok/{id}**: törli a megadott ID-jú ingatlant; ha nem található, megfelelő 404 választ kell adni.
+
+## A megoldás menete:
+
+<a href="ingatlan_backend/README.md">Backend</a><br>
+<a href="ingatlan_frontend//README.md">Frontend</a>
