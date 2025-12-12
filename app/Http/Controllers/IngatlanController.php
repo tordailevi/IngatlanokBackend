@@ -32,4 +32,8 @@ class IngatlanController extends Controller
         return response()->json(NULL, 200);
     }
 
+    public function categoryWithIngatlans() {
+        return Category::with("ingatlanok")->get();
+    }
+
 }
