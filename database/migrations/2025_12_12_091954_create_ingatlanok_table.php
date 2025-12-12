@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ingatlanok', function (Blueprint $table) {
+        Schema::create('ingatlans', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('kategoria_id')->constrained('category')->onDelete('cascade');
+        $table->foreignId('kategoria_id')->constrained('categories')->onDelete('cascade');
         $table->string('leiras');
         $table->timestamp('datum')->useCurrent();
         $table->boolean('tehermentes')->default(true);
